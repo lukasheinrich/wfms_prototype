@@ -1,5 +1,14 @@
 # wfms_prototype
 
+This is a prototype of runninng
+
+* a sequence of containers [stage in, payload, stage out]
+* a monitoring container (started before the first container, exiting after payload)
+
+either as
+* a standalone script with individual calls to a container runtime
+* a pod in kubernetes
+
 ```
 python gen_sequence.py
 ./shellseq.sh
