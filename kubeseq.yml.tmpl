@@ -1,0 +1,68 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mljob
+spec:
+  template:
+    spec:
+      shareProcessNamespace: true
+      containers:
+      - name: stage1
+        image: $stagein_image
+        imagePullPolicy: IfNotPresent
+        command: 
+        - sh
+        - -c
+        - LOGFILE=/data/step1.log PIDFILE=/data/step1.pid WAITFORFILE=/data/_wlcg_done_0.txt TOMBSTTONEFILE=/data/_wlcg_done_1.txt /wlcg/wrapper.sh /wlcg/step1.sh
+        volumeMounts:
+        - name: config-volume
+          mountPath: /wlcg
+        - name: data-volume
+          mountPath: /data
+      - name: stage2
+        image: $payload_image
+        imagePullPolicy: IfNotPresent
+        command: 
+        - sh
+        - -c
+        - LOGFILE=/data/step2.log PIDFILE=/data/step2.pid WAITFORFILE=/data/_wlcg_done_1.txt TOMBSTTONEFILE=/data/_wlcg_done_2.txt /wlcg/wrapper.sh /wlcg/step2.sh
+        volumeMounts:
+        - name: config-volume
+          mountPath: /wlcg
+        - name: data-volume
+          mountPath: /data
+      - name: stage3
+        image: $stageout_image
+        imagePullPolicy: IfNotPresent
+        command: 
+        - sh
+        - -c
+        - LOGFILE=/data/step3.log PIDFILE=/data/step3.pid WAITFORFILE=/data/_wlcg_done_2.txt TOMBSTTONEFILE=/data/_wlcg_done_3.txt /wlcg/wrapper.sh /wlcg/step3.sh
+        volumeMounts:
+        - name: config-volume
+          mountPath: /wlcg
+        - name: data-volume
+          mountPath: /data
+      - name: sidecar
+        image: $sidecar_image
+        imagePullPolicy: IfNotPresent
+        command: 
+        - sh
+        - -c
+        - /wlcg/sidecar.sh
+        volumeMounts:
+        - name: config-volume
+          mountPath: /wlcg
+        - name: data-volume
+          mountPath: /data
+      volumes:
+      - name: config-volume
+        configMap:
+          name: wrapper
+          defaultMode: 0777
+      - name: data-volume
+        emptyDir: {}
+      restartPolicy: Never
+  backoffLimit: 0
+
+
