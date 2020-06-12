@@ -1,12 +1,24 @@
 #!/bin/sh
 
-datadir="$${PWD}/work_$(date '+%s')"
+datadir="${PWD}/work_$(date '+%s')"
 mkdir $datadir
 
-singularity exec -B $datadir:/data -B $PWD/configmap:/wlcg docker://$stagein_image  sh -c 'LOGFILE=/data/step1.log PIDFILE=/data/step1.pid WAITFORFILE=/data/_wlcg_done_0.txt TOMBSTTONEFILE=/data/_wlcg_done_1.txt /wlcg/wrapper.sh /wlcg/step1.sh'  &
-singularity exec -B $datadir:/data -B $PWD/configmap:/wlcg docker://$payload_image  sh -c 'LOGFILE=/data/step2.log PIDFILE=/data/step2.pid WAITFORFILE=/data/_wlcg_done_1.txt TOMBSTTONEFILE=/data/_wlcg_done_2.txt /wlcg/wrapper.sh /wlcg/step2.sh'  &
-singularity exec -B $datadir:/data -B $PWD/configmap:/wlcg docker://$stageout_image sh -c 'LOGFILE=/data/step3.log PIDFILE=/data/step3.pid WAITFORFILE=/data/_wlcg_done_2.txt TOMBSTTONEFILE=/data/_wlcg_done_3.txt /wlcg/wrapper.sh /wlcg/step3.sh'  &
-singularity exec -B $datadir:/data -B $PWD/configmap:/wlcg docker://$sidecar_image  sh -c '/wlcg/sidecar.sh 2>&1 | tee /data/sidecar.log'  &
+function setupATLAS {
+    ddir=$1
+    cmap=$2
+    image=$3
+    if [ ${ALRB_RUNTIME} == "docker" ];then
+        docker run --pid=host --rm -v $ddir:/data -v $cmap:/wlcg $image "${@:4}" &
+    elif [ ${ALRB_RUNTIME} == 'singularity' ];then
+        singularity exec -B $ddir:/data -B $cmap:/wlcg docker://$image  "${@:4}" &
+    fi
+}
+
+ALRB_RUNTIME="singularity"
+setupATLAS $datadir $PWD/configmap lukasheinrich/middlewareimage sh -c 'LOGFILE=/data/step1.log PIDFILE=/data/step1.pid WAITFORFILE=/data/_wlcg_done_0.txt TOMBSTTONEFILE=/data/_wlcg_done_1.txt /wlcg/wrapper.sh /wlcg/step1.sh'
+setupATLAS $datadir $PWD/configmap lukasheinrich/payloadimage    sh -c 'LOGFILE=/data/step2.log PIDFILE=/data/step2.pid WAITFORFILE=/data/_wlcg_done_1.txt TOMBSTTONEFILE=/data/_wlcg_done_2.txt /wlcg/wrapper.sh /wlcg/step2.sh'
+setupATLAS $datadir $PWD/configmap lukasheinrich/middlewareimage sh -c 'LOGFILE=/data/step3.log PIDFILE=/data/step3.pid WAITFORFILE=/data/_wlcg_done_2.txt TOMBSTTONEFILE=/data/_wlcg_done_3.txt /wlcg/wrapper.sh /wlcg/step3.sh'
+setupATLAS $datadir $PWD/configmap lukasheinrich/middlewareimage sh -c '/wlcg/sidecar.sh 2>&1 | tee /data/sidecar.log'
 
 jobs -p > pids.txt
 wait < pids.txt

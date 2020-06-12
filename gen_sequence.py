@@ -5,7 +5,7 @@ import os
 import string
 import json
 
-spec = json.loads(open('jobspec.json'))
+spec = json.load(open('jobspec.json'))
 with open('configmap/payload.templ.sh','w') as paylad_f:
     paylad_f.write(spec['step2']['template'])
 os.chmod('configmap/payload.templ.sh', 0o755)
