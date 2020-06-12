@@ -2,6 +2,8 @@
 
 <img src="schema.png" height="300px"/>
 
+(from slides at [link](https://indico.cern.ch/event/925900/contributions/3890902/attachments/2051032/3437998/container_follow_up.pdf) )
+
 This is a prototype of runninng
 
 * a sequence of containers [stage in, payload, stage out]
