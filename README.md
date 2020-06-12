@@ -1,5 +1,7 @@
 # wfms_prototype
 
+<img src="schema.png"/>
+
 This is a prototype of runninng
 
 * a sequence of containers [stage in, payload, stage out]
