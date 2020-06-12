@@ -1,6 +1,6 @@
 # wfms_prototype
 
-<img src="schema.png"/>
+<img src="schema.png" height="300px"/>
 
 This is a prototype of runninng
 
