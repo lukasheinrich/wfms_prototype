@@ -7,10 +7,10 @@ import string
 
 spec = {
     'step1': {
-        'image': 'middlewareimage',
+        'image': 'lukasheinrich/middlewareimage',
     },
     'step2': {
-        'image': 'payloadimage',
+        'image': 'lukasheinrich/payloadimage',
         'template': textwrap.dedent('''\
             #/bin/sh
             python /code/fancyscript.py %IN %OUT
