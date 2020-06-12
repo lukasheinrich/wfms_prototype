@@ -4,5 +4,5 @@ ls -lrt /wlcg
 ls -lrt /data
 ls -lrt /code
 sleep 2
-python /code/pilot_runpost.py
+python3 /code/pilot_runpost.py
 echo $(date) - stage out
