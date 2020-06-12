@@ -1,0 +1,15 @@
+{
+    "step1": {
+        "image": "lukasheinrich/middlewareimage"
+    },
+    "step2": {
+        "image": "lukasheinrich/payloadimage",
+        "template": "#/bin/sh\npython /code/fancyscript.py %IN %OUT\n"
+    },
+    "step3": {
+        "image": "lukasheinrich/middlewareimage"
+    },
+    "sidecar": {
+        "image": "lukasheinrich/middlewareimage"
+    }
+}

@@ -3,27 +3,9 @@ import json
 import textwrap
 import os
 import string
+import json
 
-
-spec = {
-    'step1': {
-        'image': 'lukasheinrich/middlewareimage',
-    },
-    'step2': {
-        'image': 'lukasheinrich/payloadimage',
-        'template': textwrap.dedent('''\
-            #/bin/sh
-            python /code/fancyscript.py %IN %OUT
-        '''),
-    },
-    'step3': {
-        'image': 'lukasheinrich/middlewareimage',
-    },
-    'sidecar': {
-        'image': 'lukasheinrich/middlewareimage',
-    },
-}
-
+spec = json.loads(open('jobspec.json'))
 with open('configmap/payload.templ.sh','w') as paylad_f:
     paylad_f.write(spec['step2']['template'])
 os.chmod('configmap/payload.templ.sh', 0o755)

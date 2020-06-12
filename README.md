@@ -16,7 +16,7 @@ either as
 
 ### Running without Kubernetes (think setupATLAS -c)
 
-#### Docker
+#### Docker steered with Shell
 ```
 $> cat shellseq_docker.sh
 #!/bin/sh
@@ -33,7 +33,7 @@ jobs -p > pids.txt
 wait < pids.txt
 rm pids.txt
 ```
-#### Singularity
+#### Singularity steered with Shell
 
 ```
 $> cat shellseq_sing.sh
@@ -55,6 +55,13 @@ rm pids.txt
 ```
 ./shellseq_sing.sh.sh
 ```
+
+#### Docker steered w/ Python
+
+```
+python python_seq.py jobspec.json
+```
+
 
 ### Run with Kubernetes
 
